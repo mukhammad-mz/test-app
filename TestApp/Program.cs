@@ -40,7 +40,7 @@ using (StreamReader reader = new StreamReader(path))
                             await writer.WriteLineAsync($"{ipList[0]}.{ipList[1]}.{ip1_3}.{j}");
                             count++;
                         }
-
+                }
                 writer.Close();
             }
             Console.WriteLine(count);

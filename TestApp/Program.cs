@@ -3,22 +3,29 @@ using System.Text.Json.Serialization;
 
 string path2 = "json.txt";
 
-string UserIP = "176.113.143.255";
+string UserIP = "177.113.143.255";
 bool found = false;
 
 using (FileStream fileStream = new FileStream(path2, FileMode.OpenOrCreate))
 {
     var ipAddressRangeList = await JsonSerializer.DeserializeAsync<List<IPRange>>(fileStream);
 
-    if (ipAddressRangeList.Count > 0)
-        foreach (var range in ipAddressRangeList)
+    if (ipAddressRangeList == null || ipAddressRangeList.Count <= 0)
+    {
+        Console.WriteLine("Not Found");
+
+        return;
+    }
+
+    foreach (var range in ipAddressRangeList)
+    {
+        if (IpFind.CheckUserIPInRange(UserIP, range))
         {
-            if (IpFind.Find(UserIP, range))
-            {
-                found = true;
-                break;
-            }
+            found = true;
+            break;
         }
+    }
+    
 }
 
 if (found)
@@ -29,43 +36,31 @@ else
 
 public class IpFind
 {
-    public static bool Find(string IpAdress, IPRange data)
+    public static bool CheckUserIPInRange(string IpAdress, IPRange data)
     {
-        var userIpSplit = IpAdress.Split(".", StringSplitOptions.None);
-        //step 1
-        if (data.Start.StartsWith(userIpSplit[0]))
+        var userIPSplit = IpAdress.Split(".", StringSplitOptions.None);
+        var startSplit = data.Start.Split(".", StringSplitOptions.None);
+        var endSplit = data.End.Split(".", StringSplitOptions.None);
+
+        for (int i = 0; i < 4; i++)
         {
-            try
+            if (!CheckSplitedRange(Convert.ToInt32(userIPSplit[i]), Convert.ToInt32(startSplit[i]), Convert.ToInt32(endSplit[i])))
             {
-                //step 2
-                if (String.Equals(data.Start.Substring(userIpSplit[0].Length + 1, userIpSplit[1].Length), userIpSplit[1]))
-                {
-                    var start = int.Parse(data.Start.Substring(userIpSplit[0].Length + userIpSplit[1].Length + 2, userIpSplit[2].Length));
-                    var end = int.Parse(data.End.Substring(userIpSplit[0].Length + userIpSplit[1].Length + 2, userIpSplit[2].Length));
-                    var userIp = int.Parse(userIpSplit[2]);
-
-                    //step 3
-                    if (start <= userIp && end >= userIp)
-                    {
-                        start = int.Parse(data.Start.Substring(data.Start.LastIndexOf('.') + 1));
-                        end = int.Parse(data.End.Substring(data.End.LastIndexOf('.') + 1));
-                        userIp = int.Parse(userIpSplit[3]);
-
-                        //step 4 
-                        if (start <= userIp && end >= userIp)
-                        {
-                            return true;
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-
                 return false;
             }
         }
+
+        return true;
+      
+    }
+
+    private static bool CheckSplitedRange(int userSplitedRange, int startSplitedRange, int endSplitedRange)
+    {
+        if (userSplitedRange >= startSplitedRange && userSplitedRange <= endSplitedRange)
+        {
+            return true;
+        }
+
         return false;
     }
 }

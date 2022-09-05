@@ -1,4 +1,5 @@
 ﻿
+using System.Net;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -35,6 +36,14 @@ using (FileStream fs = new FileStream(path2, FileMode.OpenOrCreate))
     IpAddress? person = await JsonSerializer.DeserializeAsync<IpAddress>(fs);
 
     Console.WriteLine(person.IpAdresList.Count);
+
+    IPNetwork ipnetwork = IPNetwork.Parse("");
+
+    IPNetwork ipaddress = IPNetwork.Parse("");
+
+    bool contains1 = IPNetwork.Contains(ipnetwork, ipaddress);
+
+
 }
 
 
@@ -47,9 +56,6 @@ public partial class IpAddress
 
 public partial class IpAdresList
 {
-    [JsonPropertyName("start")]
-    public string Start { get; set; }
-
-    [JsonPropertyName("end")]
-    public string End { get; set; }
+    [JsonPropertyName("ip-address")]
+    public string IpAddress { get; set; }
 }

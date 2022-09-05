@@ -1,24 +1,24 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 
-string path = "C:/Users/I_Kodirov/Desktop/ip adres list.txt";
-string path2 = "C:/Users/I_Kodirov/Desktop/json.txt";
+string path2 = "json.txt";
 
 string UserIP = "176.113.143.255";
 bool found = false;
 
 using (FileStream fs = new FileStream(path2, FileMode.OpenOrCreate))
 {
-    IpAddress? person = await JsonSerializer.DeserializeAsync<IpAddress>(fs);
+    var ipAddressList = await JsonSerializer.DeserializeAsync<IpAddress>(fs);
 
-    foreach (var item in person.IpAdresList)
-    {
-        if (IpFind.Find(UserIP, item))
+    if (ipAddressList != null)
+        foreach (var item in ipAddressList.IpAdresList)
         {
-           found = true;
-            break;
+            if (IpFind.Find(UserIP, item))
+            {
+                found = true;
+                break;
+            }
         }
-    }
 }
 
 if (found)
@@ -62,6 +62,7 @@ public class IpFind
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+
                 return false;
             }
         }

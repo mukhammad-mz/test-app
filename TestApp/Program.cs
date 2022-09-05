@@ -72,7 +72,7 @@ public class IpFind
 
 public partial class IPRangeList
 {
-    [JsonPropertyName("ip-adress-list")]
+    [JsonPropertyName("ip-range-list")]
     public List<Range> Range { get; set; }
 }
 

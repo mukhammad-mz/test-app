@@ -8,12 +8,12 @@ bool found = false;
 
 using (FileStream fileStream = new FileStream(path2, FileMode.OpenOrCreate))
 {
-    var ipAddressList = await JsonSerializer.DeserializeAsync<IpAddressList>(fileStream);
+    var ipAddressRangeList = await JsonSerializer.DeserializeAsync<IPRangeList>(fileStream);
 
-    if (ipAddressList != null)
-        foreach (var ipAddress in ipAddressList.IpAdress)
+    if (ipAddressRangeList != null)
+        foreach (var range in ipAddressRangeList.Range)
         {
-            if (IpFind.Find(UserIP, ipAddress))
+            if (IpFind.Find(UserIP, range))
             {
                 found = true;
                 break;
@@ -29,27 +29,27 @@ else
 
 public class IpFind
 {
-    public static bool Find(string IpAdress, IpAdress data)
+    public static bool Find(string IpAdress, Range data)
     {
-        var userIPSplit = IpAdress.Split(".", StringSplitOptions.None);
+        var userIpSplit = IpAdress.Split(".", StringSplitOptions.None);
         //step 1
-        if (data.Start.StartsWith(userIPSplit[0]))
+        if (data.Start.StartsWith(userIpSplit[0]))
         {
             try
             {
                 //step 2
-                if (String.Equals(data.Start.Substring(userIPSplit[0].Length + 1, userIPSplit[1].Length), userIPSplit[1]))
+                if (String.Equals(data.Start.Substring(userIpSplit[0].Length + 1, userIpSplit[1].Length), userIpSplit[1]))
                 {
-                    var start = int.Parse(data.Start.Substring(userIPSplit[0].Length + userIPSplit[1].Length + 2, userIPSplit[2].Length));
-                    var end = int.Parse(data.End.Substring(userIPSplit[0].Length + userIPSplit[1].Length + 2, userIPSplit[2].Length));
-                    var userIp = int.Parse(userIPSplit[2]);
+                    var start = int.Parse(data.Start.Substring(userIpSplit[0].Length + userIpSplit[1].Length + 2, userIpSplit[2].Length));
+                    var end = int.Parse(data.End.Substring(userIpSplit[0].Length + userIpSplit[1].Length + 2, userIpSplit[2].Length));
+                    var userIp = int.Parse(userIpSplit[2]);
 
                     //step 3
                     if (start <= userIp && end >= userIp)
                     {
                         start = int.Parse(data.Start.Substring(data.Start.LastIndexOf('.') + 1));
                         end = int.Parse(data.End.Substring(data.End.LastIndexOf('.') + 1));
-                        userIp = int.Parse(userIPSplit[3]);
+                        userIp = int.Parse(userIpSplit[3]);
 
                         //step 4 
                         if (start <= userIp && end >= userIp)
@@ -70,13 +70,13 @@ public class IpFind
     }
 }
 
-public partial class IpAddressList
+public partial class IPRangeList
 {
     [JsonPropertyName("ip-adress-list")]
-    public List<IpAdress> IpAdress { get; set; }
+    public List<Range> Range { get; set; }
 }
 
-public partial class IpAdress
+public partial class Range
 {
     [JsonPropertyName("start")]
     public string Start { get; set; }

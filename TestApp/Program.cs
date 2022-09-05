@@ -13,6 +13,7 @@ using (StreamReader reader = new StreamReader(path))
         if (line != null)
         {
             int i = 0;
+            bool temp = false;
             var lineLisr = line.Split("-", StringSplitOptions.None);
             var ipList = lineLisr[0].Split(".", StringSplitOptions.None);
             var ipList2 = lineLisr[1].Split(".", StringSplitOptions.None);
@@ -25,27 +26,23 @@ using (StreamReader reader = new StreamReader(path))
 
             using (StreamWriter writer = new StreamWriter(path2, true))
             {
-                for (; ip2_3 >= ip1_3; ip1_3++)
+                for (; ip2_3 >= ip1_3; ip1_3++, temp = true)
                 {
-                    if (ip2_3 == ip1_3 && ip2_4 > 0)
-                        for (int j = ip1_4; j <= ip2_4; j++)
-                        {
-                            await writer.WriteLineAsync($"{ipList[0]}.{ipList[1]}.{ip1_3}.{j}");
-                            count++;
-
-                        }
+                    if (ip1_4 > 0 && ip2_3 > ip1_3 && !temp )
+                    {
+                        await writer.WriteLineAsync($"{ipList[0]}.{ipList[1]}.{ip1_3}.{ip1_4}/255");
+                    }
+                    else if (ip1_3 == ip2_3 && ip1_4 > 0 && temp)
+                    {
+                        await writer.WriteLineAsync($"{ipList[0]}.{ipList[1]}.{ip1_3}.0/{ip2_4}");
+                    }
                     else
-                        for (int j = 0; j <= 255; j++)
-                        {
-                            await writer.WriteLineAsync($"{ipList[0]}.{ipList[1]}.{ip1_3}.{j}");
-                            count++;
-                        }
+                        await writer.WriteLineAsync($"{ipList[0]}.{ipList[1]}.{ip1_3}.0/255");
                 }
                 writer.Close();
             }
-            Console.WriteLine(count);
-            count = 0;
         }
     }
     reader.Close();
+    Console.WriteLine("Ok");
 }

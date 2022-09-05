@@ -8,10 +8,10 @@ bool found = false;
 
 using (FileStream fileStream = new FileStream(path2, FileMode.OpenOrCreate))
 {
-    var ipAddressRangeList = await JsonSerializer.DeserializeAsync<IPRangeList>(fileStream);
+    var ipAddressRangeList = await JsonSerializer.DeserializeAsync<List<IPRange>>(fileStream);
 
-    if (ipAddressRangeList != null)
-        foreach (var range in ipAddressRangeList.Range)
+    if (ipAddressRangeList.Count > 0)
+        foreach (var range in ipAddressRangeList)
         {
             if (IpFind.Find(UserIP, range))
             {
@@ -29,7 +29,7 @@ else
 
 public class IpFind
 {
-    public static bool Find(string IpAdress, Range data)
+    public static bool Find(string IpAdress, IPRange data)
     {
         var userIpSplit = IpAdress.Split(".", StringSplitOptions.None);
         //step 1
@@ -70,13 +70,7 @@ public class IpFind
     }
 }
 
-public partial class IPRangeList
-{
-    [JsonPropertyName("ip-range-list")]
-    public List<Range> Range { get; set; }
-}
-
-public partial class Range
+public partial class IPRange
 {
     [JsonPropertyName("start")]
     public string Start { get; set; }

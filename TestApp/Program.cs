@@ -13,19 +13,18 @@ class  TestYear
     {
         int expiration = expirationDate % 10;
 
-        if (expiration == 1)
-            return "год";
-
+        if (expirationDate > 10 && expirationDate < 20 ||
+            expiration >= 5 && expiration <= 9 || expiration == 0)
+            return "лет";
         if (expiration >= 2 && expiration <= 4)
             return "года";
-
-        if (expiration >= 5 && expiration <= 9 || expiration == 0)
-            return "лет";
-
-        return "";
+        else
+            return "год";
     }
     public static string GetOfferExpFormat(int offerExpiration)
     {
+        
+
         int offerExp = offerExpiration / 12 % 10;
 
         int offerExpDec = offerExpiration / 12 % 100 / 10;
